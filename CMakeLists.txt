@@ -3,19 +3,25 @@ project(CurlX VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set(CMAKE_POLICY_DEFAULT_CMP0048 NEW)
 
 find_package(CURL REQUIRED)
 
-# Fetch nlohmann_json
+# Fetch nlohmann_json (header-only)
 include(FetchContent)
 FetchContent_Declare(
   json_lib
   GIT_REPOSITORY https://github.com/nlohmann/json.git
   GIT_TAG v3.11.3
 )
+set(JSON_BuildTests OFF CACHE INTERNAL "")
 FetchContent_MakeAvailable(json_lib)
+
+# Prevent nlohmann_json from being installed/exported
+set_target_properties(nlohmann_json PROPERTIES
+    EXCLUDE_FROM_ALL TRUE
+    EXCLUDE_FROM_DEFAULT_BUILD TRUE
+)
 
 # Fetch GoogleTest
 include(FetchContent)
@@ -24,6 +30,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/google/googletest.git
   GIT_TAG release-1.11.0
 )
+set(INSTALL_GTEST OFF CACHE INTERNAL "")
 FetchContent_MakeAvailable(googletest)
 
 # Core library
@@ -46,11 +53,10 @@ target_include_directories(CurlX PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-# libcurl is public so consumers get it automatically
-target_link_libraries(CurlX PUBLIC CURL::libcurl)
-
-# JSON is private — avoids export error
-target_link_libraries(CurlX PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(CurlX
+    PUBLIC CURL::libcurl
+    PRIVATE nlohmann_json::nlohmann_json
+)
 
 target_compile_options(CurlX PUBLIC -Wno-deprecated-literal-operator)
 
@@ -63,7 +69,7 @@ install(TARGETS CurlX
     INCLUDES DESTINATION include
 )
 
-# Export targets
+# Export CurlX only (JSON is excluded)
 install(EXPORT CurlXTargets
     FILE CurlXTargets.cmake
     NAMESPACE CurlX::
