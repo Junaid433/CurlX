@@ -84,13 +84,4 @@ install(
 
 install(DIRECTORY include/CurlX/ DESTINATION include)
 
-add_executable(curlx
-    main.cpp
-)
-
-target_link_libraries(curlx PRIVATE CurlX)
-target_include_directories(curlx PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
 add_subdirectory(tests)
