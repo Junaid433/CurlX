@@ -46,8 +46,10 @@ target_include_directories(CurlX PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-# Keep libcurl public, JSON private (so it’s not required for consumers)
+# libcurl is public so consumers get it automatically
 target_link_libraries(CurlX PUBLIC CURL::libcurl)
+
+# JSON is private — avoids export error
 target_link_libraries(CurlX PRIVATE nlohmann_json::nlohmann_json)
 
 target_compile_options(CurlX PUBLIC -Wno-deprecated-literal-operator)
