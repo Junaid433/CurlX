@@ -17,14 +17,7 @@ FetchContent_Declare(
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 FetchContent_MakeAvailable(json_lib)
 
-# Prevent nlohmann_json from being installed/exported
-set_target_properties(nlohmann_json PROPERTIES
-    EXCLUDE_FROM_ALL TRUE
-    EXCLUDE_FROM_DEFAULT_BUILD TRUE
-)
-
-# Fetch GoogleTest
-include(FetchContent)
+# Fetch GoogleTest (BUILD only)
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
@@ -53,14 +46,16 @@ target_include_directories(CurlX PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(CurlX
-    PUBLIC CURL::libcurl
-    PRIVATE nlohmann_json::nlohmann_json
+# Instead of linking nlohmann_json, add its include directory only
+target_include_directories(CurlX PRIVATE
+    ${json_lib_SOURCE_DIR}/include
 )
+
+target_link_libraries(CurlX PUBLIC CURL::libcurl)
 
 target_compile_options(CurlX PUBLIC -Wno-deprecated-literal-operator)
 
-# Install library
+# Install library and export targets
 install(TARGETS CurlX
     EXPORT CurlXTargets
     ARCHIVE DESTINATION lib
@@ -69,14 +64,13 @@ install(TARGETS CurlX
     INCLUDES DESTINATION include
 )
 
-# Export CurlX only (JSON is excluded)
 install(EXPORT CurlXTargets
     FILE CurlXTargets.cmake
     NAMESPACE CurlX::
     DESTINATION lib/cmake/CurlX
 )
 
-# Version file
+# Version file for package config
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/CurlXConfigVersion.cmake"
@@ -84,15 +78,13 @@ write_basic_package_version_file(
     COMPATIBILITY AnyNewerVersion
 )
 
-install(
-    FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/CurlXConfigVersion.cmake"
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/CurlXConfigVersion.cmake"
     DESTINATION lib/cmake/CurlX
 )
 
-install(
-    FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/CurlXConfig.cmake.in"
+install(FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/CurlXConfig.cmake.in"
     DESTINATION lib/cmake/CurlX
     RENAME CurlXConfig.cmake
 )
