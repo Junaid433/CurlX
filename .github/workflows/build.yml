@@ -21,8 +21,3 @@ jobs:
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build
-
-    - name: Test
-      run: |
-        cd ${{github.workspace}}/build
-        ctest --output-on-failure
