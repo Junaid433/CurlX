@@ -33,3 +33,12 @@ target_include_directories(CurlX PUBLIC include)
 target_include_directories(CurlX PRIVATE ${json_lib_SOURCE_DIR}/include)
 target_link_libraries(CurlX PUBLIC CURL::libcurl)
 target_compile_options(CurlX PUBLIC -Wno-deprecated-literal-operator)
+
+install(TARGETS CurlX
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY include/CurlX DESTINATION include)
+install(DIRECTORY ${json_lib_SOURCE_DIR}/include/nlohmann/ DESTINATION include/nlohmann)
