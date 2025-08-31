@@ -25,7 +25,7 @@ CurlX: CURL ON STEROIDS!
 Before you begin, ensure you have the following installed:
 
 *   **CMake**: Version 3.15 or higher.
-*   **C++ Compiler**: A C++17 compatible compiler (e.g., GCC, Clang, MSVC).
+*   **C++ Compiler**: A C++23 compatible compiler (e.g., GCC, Clang, MSVC).
 *   **libcurl**: Development libraries for `libcurl`.
 *   **nlohmann/json**: This dependency will be fetched automatically by CMake.
 
@@ -41,9 +41,6 @@ cd build
 cmake ..
 make -j$(nproc)
 sudo make install
-
-# (Optional) Run tests
-make test
 ```
 
 ## 💡 Usage Example
